@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 		init_log(false);
 	}
 
-	BOOST_LOG_SEV(global_logger::get(), severity_level::info) << "Goldmine-Quik-Gateway started";
+	LOG(severity_level::info) << "Goldmine-Quik-Gateway started";
 
 	return 0;
 }

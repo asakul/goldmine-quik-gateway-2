@@ -30,7 +30,7 @@ int main(int argc, char** argv)
 		init_log(false);
 	}
 
-	LOG(severity_level::info) << "Goldmine-Quik-Gateway started";
+	LOG(info) << "Goldmine-Quik-Gateway started";
 
 	return 0;
 }

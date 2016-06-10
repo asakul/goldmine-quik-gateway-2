@@ -24,8 +24,8 @@ inline std::basic_ostream<CharT, TraitsT>& operator << (std::basic_ostream<CharT
 	{
 		"trace",
 		"debug",
-		"info",
-		"warning",
+		"info ",
+		"warn ",
 		"error",
 		"fatal"
 	};
@@ -39,7 +39,7 @@ inline std::basic_ostream<CharT, TraitsT>& operator << (std::basic_ostream<CharT
 
 BOOST_LOG_GLOBAL_LOGGER(global_logger, boost::log::sources::severity_channel_logger_mt<severity_level>)
 
-#define LOG(x) BOOST_LOG_SEV(global_logger::get(), (x))
+#define LOG(x) BOOST_LOG_SEV(global_logger::get(), severity_level::x)
 
 void init_log(bool debug);
 

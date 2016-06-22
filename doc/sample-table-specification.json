@@ -1,0 +1,11 @@
+[
+	{
+		"type" : "current_parameters",
+		"topic" : "allparams",
+		"exclude" : ["RI*/price"]
+	},
+	{
+		"type" : "all_deals",
+		"topic" : "alld"
+	}
+]

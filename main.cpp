@@ -4,6 +4,8 @@
 #include <boost/program_options/parsers.hpp>
 #include <iostream>
 
+#include "core/core.h"
+
 namespace po = boost::program_options;
 
 int main(int argc, char** argv)
@@ -38,6 +40,10 @@ int main(int argc, char** argv)
 	}
 
 	LOG(info) << "Goldmine-Quik-Gateway started";
+
+	Core core(vm);
+
+	core.run();
 
 	return 0;
 }

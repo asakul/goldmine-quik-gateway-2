@@ -12,6 +12,7 @@
 #include "quotesource/quotesource.h"
 
 #include <boost/program_options.hpp>
+#include <boost/program_options/variables_map.hpp>
 
 #include <atomic>
 #include <memory>
@@ -19,7 +20,7 @@
 class Core
 {
 public:
-	Core(const boost::program_options::variable_map& config);
+	Core(const boost::program_options::variables_map& config);
 	virtual ~Core();
 
 	void run();

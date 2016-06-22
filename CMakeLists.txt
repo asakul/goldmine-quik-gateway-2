@@ -28,8 +28,12 @@ set(src
 
 	binary/rawbytearrayparser.cpp
 
+	core/core.cpp
 	core/dataimportserver.cpp
 	core/tables/tableparserfactoryregistry.cpp
+	core/tables/tableconstructor.cpp
+	core/tables/parsers/currentparametertableparser.cpp
+	core/tables/parsers/alldealstableparser.cpp
 
 	xl/xlparser.cpp
 	xl/xltable.cpp
@@ -42,13 +46,13 @@ target_link_libraries(${PROJECT} ${Boost_LIBRARIES})
 target_link_libraries(${PROJECT} -L${CMAKE_CURRENT_BINARY_DIR}/../libgoldmine -lgoldmine -L${CMAKE_CURRENT_BINARY_DIR}/../libcppio -lcppio )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-	
+
 set(test_sources
 	tests/test.cpp
 
 	tests/xl_test.cpp
 	)
-	
+
 add_executable(${PROJECT}-test ${test_sources} ${src})
 set_target_properties(${PROJECT}-test PROPERTIES COMPILE_FLAGS "-O0 -g -fprofile-arcs -ftest-coverage")
 set_target_properties(${PROJECT}-test PROPERTIES LINK_FLAGS "-fprofile-arcs -lgcov")

@@ -116,6 +116,10 @@ bool DataImportServer::parseIncomingData(const std::string& topic, HDDEDATA hDat
 		LOG_WITH(gs_logger, warning) << "Unable to parse incoming XlTable: " << e.what();
 	}
 
-
 	return true;
+}
+
+void DataImportServer::incomingTick(const std::string& ticker, const goldmine::Tick& tick)
+{
+
 }

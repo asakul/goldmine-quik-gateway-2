@@ -12,8 +12,9 @@
 #include <memory>
 #include <stdexcept>
 #include "tables/tableparser.h"
+#include "tables/datasink.h"
 
-class DataImportServer
+class DataImportServer : public DataSink
 {
 public:
 	typedef std::shared_ptr<DataImportServer> Ptr;
@@ -22,6 +23,8 @@ public:
 	virtual ~DataImportServer();
 
 	void registerTableParser(const TableParser::Ptr& parser);
+
+	virtual void incomingTick(const std::string& ticker, const goldmine::Tick& tick) override;
 
 public:
 	HDDEDATA ddeCallback(UINT type, UINT fmt, HCONV hConv, HSZ hsz1, HSZ hsz2, HDDEDATA hData, ULONG_PTR dwData1, ULONG_PTR dwData2);

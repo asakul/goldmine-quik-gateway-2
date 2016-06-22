@@ -9,36 +9,50 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/Catch/single_include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/jsoncpp/json)
 
 set(CMAKE_CXX_FLAGS "-std=gnu++11")
+ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK)
 
 # boost
-set (BOOST_ROOT ${CMAKE_PREFIX_PATH})
-set (Boost_USE_STATIC_LIBS ON)
+set (Boost_USE_STATIC_LIBS OFF)
 set (Boost_USE_MULTITHREADED ON)
 
 add_definitions(-DBOOST_THREAD_USE_LIB)
 
-find_package(Boost COMPONENTS system thread program_options date_time log_setup log filesystem REQUIRED)
+find_package(Boost COMPONENTS system thread program_options date_time filesystem log_setup log REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libgoldmine)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libcppio/include)
 
 set(src
 	3rdparty/jsoncpp/jsoncpp.cpp
+
+	binary/rawbytearrayparser.cpp
+
+	core/dataimportserver.cpp
+	core/tables/tableparserfactoryregistry.cpp
+
+	xl/xlparser.cpp
+	xl/xltable.cpp
 
 	log.cpp
 )
 
 add_executable(${PROJECT} main.cpp ${src})
-target_link_libraries(${PROJECT} ${Boost_LIBRARIES} -L${CMAKE_CURRENT_BINARY_DIR}/../goldmine -lgoldmine)
+target_link_libraries(${PROJECT} ${Boost_LIBRARIES})
+target_link_libraries(${PROJECT} -L${CMAKE_CURRENT_BINARY_DIR}/../libgoldmine -lgoldmine -L${CMAKE_CURRENT_BINARY_DIR}/../libcppio -lcppio )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 	
 set(test_sources
 	tests/test.cpp
+
+	tests/xl_test.cpp
 	)
 	
 add_executable(${PROJECT}-test ${test_sources} ${src})
 set_target_properties(${PROJECT}-test PROPERTIES COMPILE_FLAGS "-O0 -g -fprofile-arcs -ftest-coverage")
 set_target_properties(${PROJECT}-test PROPERTIES LINK_FLAGS "-fprofile-arcs -lgcov")
-target_link_libraries(${PROJECT}-test  ${Boost_LIBRARIES} -L${CMAKE_CURRENT_BINARY_DIR}/../goldmine -lgoldmine)
+target_link_libraries(${PROJECT}-test  ${Boost_LIBRARIES} -L${CMAKE_CURRENT_BINARY_DIR}/../libgoldmine -lgoldmine -L${CMAKE_CURRENT_BINARY_DIR}/../libcppio -lcppio )
 
 if(UNIX)
 	target_link_libraries(${PROJECT}-test ${Boost_LIBRARIES} -lpthread -ldl)

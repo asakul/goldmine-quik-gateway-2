@@ -1,6 +1,8 @@
 
 #include "log.h"
 #include <boost/program_options.hpp>
+#include <boost/program_options/parsers.hpp>
+#include <iostream>
 
 namespace po = boost::program_options;
 
@@ -10,9 +12,14 @@ int main(int argc, char** argv)
 	desc.add_options()
 		("help", "Print help message")
 		("debug", "Enables debug output")
-		("tables-file", po::value<std::string>(), "Tables specification file");
+		("tables-file", po::value<std::string>(), "Tables specification file")
+		("dde-server-name", po::value<std::string>(), "DDE server name")
+		("dde-topic", po::value<std::string>(), "DDE topic")
+		("quotesource-endpoint", po::value<std::string>(), "Quotesource endpoint")
+		;
 	po::variables_map vm;
 	po::store(po::parse_command_line(argc, argv, desc), vm);
+	po::store(po::parse_config_file<char>("gateway.conf", desc, false), vm);
 	po::notify(vm);
 
 	if(vm.count("help"))

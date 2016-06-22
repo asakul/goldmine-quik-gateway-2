@@ -1,0 +1,40 @@
+
+#ifndef GQG_EXCEPTIONS
+#define GQG_EXCEPTIONS 
+
+#include <exception>
+#include <string>
+#include <boost/exception/all.hpp>
+
+struct GoldmineQuikGatewayException : virtual public boost::exception, virtual public std::exception
+{
+    const char* what() const throw()
+    {
+        return boost::diagnostic_information_what(*this);
+    }
+};
+
+struct ExternalApiError : public GoldmineQuikGatewayException
+{
+};
+
+struct LogicError : public GoldmineQuikGatewayException
+{
+};
+
+struct ProtocolError : public GoldmineQuikGatewayException
+{
+};
+
+struct ParameterError : public GoldmineQuikGatewayException
+{
+};
+
+struct FormatError : public GoldmineQuikGatewayException
+{
+};
+
+typedef boost::error_info<struct errinfo_str_, std::string> errinfo_str;
+
+
+#endif /* ifndef GQG_EXCEPTIONS */

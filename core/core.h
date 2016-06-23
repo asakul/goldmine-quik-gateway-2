@@ -17,7 +17,7 @@
 #include <atomic>
 #include <memory>
 
-class Core
+class Core : public std::enable_shared_from_this<Core>, public DataSink
 {
 public:
 	Core(const boost::program_options::variables_map& config);
@@ -25,12 +25,14 @@ public:
 
 	void run();
 
+	virtual void incomingTick(const std::string& ticker, const goldmine::Tick& tick) override;
 private:
 	DataImportServer::Ptr m_ddeServer;
 	TableParserFactoryRegistry::Ptr m_registry;
 	std::shared_ptr<cppio::IoLineManager> m_io;
 	std::shared_ptr<goldmine::QuoteSource> m_quotesourceServer;
 	std::atomic<bool> m_run;
+	std::string m_tablesConfig;
 };
 
 #endif /* ifndef CORE_H */

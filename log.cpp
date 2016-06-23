@@ -4,6 +4,7 @@
 #include <boost/log/expressions.hpp>
 #include <boost/log/sinks/text_file_backend.hpp>
 #include <boost/log/utility/setup/file.hpp>
+#include <boost/log/utility/setup/console.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
 #include <boost/log/sources/record_ostream.hpp>
 #include <boost/log/support/date_time.hpp>
@@ -26,11 +27,20 @@ void init_log(bool debug)
 			boost::log::keywords::format = expr::stream
 				<< expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
 				<< " >" << expr::attr<severity_level>("Severity") << "<"
-				<< " [" << expr::attr<std::string>("Channel") << "] " << expr::smessage); //"[%TimeStamp%][%Channel%] <%Severity%>: %Message%");
+				<< " [" << expr::attr<std::string>("Channel") << "] " << expr::smessage);
+	boost::log::add_console_log(std::cout,
+								boost::log::keywords::format = expr::stream
+				<< expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
+				<< " >" << expr::attr<severity_level>("Severity") << "<"
+				<< " [" << expr::attr<std::string>("Channel") << "] " << expr::smessage,
+								boost::log::keywords::auto_flush = true);
 
-	boost::log::core::get()->set_filter([=](const boost::log::attribute_value_set& attr_set)
+	if(!debug)
+	{
+		boost::log::core::get()->set_filter([=](const boost::log::attribute_value_set& attr_set)
 			{
 			return attr_set["Severity"].extract<severity_level>() >= severity_level::info;
 			});
+	}
 }
 

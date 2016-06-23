@@ -29,6 +29,7 @@ DataImportServer::DataImportServer(const std::string& serverName, const std::str
 {
 	assert(!gs_server);
 	gs_server = this;
+	LOG_WITH(gs_logger, info) << "Creating DDE server: " << serverName << "; topic: " << topicName;
 	if(DdeInitialize(&m_instanceId, (PFNCALLBACK)theDdeCallback, APPCLASS_STANDARD, 0))
 		BOOST_THROW_EXCEPTION(ExternalApiError() << errinfo_str("Unable to initialize DDE server"));
 
@@ -41,6 +42,7 @@ DataImportServer::DataImportServer(const std::string& serverName, const std::str
 
 	if(!DdeNameService(m_instanceId, m_appName, NULL, DNS_REGISTER))
 		BOOST_THROW_EXCEPTION(ExternalApiError() << errinfo_str("Unable to register DDE server"));
+	LOG_WITH(gs_logger, info) << "DDE server is up";
 }
 
 DataImportServer::~DataImportServer()
@@ -51,6 +53,11 @@ void DataImportServer::registerTableParser(const TableParser::Ptr& parser)
 {
 	if(std::find(m_tableParsers.begin(), m_tableParsers.end(), parser) == m_tableParsers.end())
 		m_tableParsers.push_back(parser);
+}
+
+void DataImportServer::stop()
+{
+	m_tableParsers.clear();
 }
 
 HDDEDATA DataImportServer::ddeCallback(UINT type, UINT fmt, HCONV hConv, HSZ hsz1, HSZ hsz2, HDDEDATA hData, ULONG_PTR dwData1, ULONG_PTR dwData2)
@@ -117,9 +124,4 @@ bool DataImportServer::parseIncomingData(const std::string& topic, HDDEDATA hDat
 	}
 
 	return true;
-}
-
-void DataImportServer::incomingTick(const std::string& ticker, const goldmine::Tick& tick)
-{
-
 }

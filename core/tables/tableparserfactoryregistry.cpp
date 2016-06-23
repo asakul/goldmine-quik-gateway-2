@@ -4,6 +4,8 @@
 
 #include "tableparserfactoryregistry.h"
 
+#include "log.h"
+
 TableParserFactoryRegistry::TableParserFactoryRegistry()
 {
 }
@@ -23,6 +25,7 @@ TableParser::Ptr TableParserFactoryRegistry::create(const std::string& type, con
 	if(it == m_factories.end())
 		throw std::runtime_error("Unable to create parser with type: " + type);
 
+	LOG(trace) << "Registry: creating parser: " << type;
 	return it->second->create(topic, datasink);
 }
 

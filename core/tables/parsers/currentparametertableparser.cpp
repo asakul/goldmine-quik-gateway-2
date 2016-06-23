@@ -43,6 +43,7 @@ CurrentParameterTableParser::CurrentParameterTableParser(const std::string& topi
 		const DataSink::Ptr& datasink) : m_topic(topic),
 	m_datasink(datasink)
 {
+	LOG(trace) << "CurrentParameterTableParser: " << topic;
 }
 
 CurrentParameterTableParser::~CurrentParameterTableParser()

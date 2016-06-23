@@ -7,7 +7,10 @@
 #include "json.h"
 
 TableConstructor::TableConstructor(const TableParserFactoryRegistry::Ptr& registry,
-								const DataImportServer::Ptr& importServer)
+								const DataImportServer::Ptr& importServer,
+								const DataSink::Ptr& datasink) : m_registry(registry),
+								m_importServer(importServer),
+								m_datasink(datasink)
 {
 
 }
@@ -30,8 +33,9 @@ void TableConstructor::readConfig(std::istream& stream)
 	{
 		auto type = cfg["type"].asString();
 		auto topic = cfg["topic"].asString();
+		LOG(debug) << "Trying to create parser: " << type;
 
-		auto parser = m_registry->create(type, topic, m_importServer);
+		auto parser = m_registry->create(type, topic, m_datasink);
 		if(!parser)
 		{
 			LOG(warning) << "Unable to create parser: " << type << " for topic: " << topic;

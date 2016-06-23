@@ -33,6 +33,7 @@ int main(int argc, char** argv)
 	if(vm.count("debug"))
 	{
 		init_log(true);
+		LOG(debug) << "Activated debug output";
 	}
 	else
 	{
@@ -41,9 +42,9 @@ int main(int argc, char** argv)
 
 	LOG(info) << "Goldmine-Quik-Gateway started";
 
-	Core core(vm);
+	auto core = std::make_shared<Core>(vm);
 
-	core.run();
+	core->run();
 
 	return 0;
 }

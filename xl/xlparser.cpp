@@ -48,7 +48,7 @@ void XlParser::parse(uint8_t* data, int datalength)
 
 	m_table = std::make_shared<XlTable>(width, height);
 
-	LOG_WITH(gs_logger, debug) << "Table size: " << width << "x" << height;
+	//LOG_WITH(gs_logger, debug) << "Table size: " << width << "x" << height;
 
 	XlPosition pos(0, 0, width, height);
 

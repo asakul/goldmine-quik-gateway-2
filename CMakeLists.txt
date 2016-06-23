@@ -39,11 +39,13 @@ set(src
 	xl/xltable.cpp
 
 	log.cpp
+
+	ui/mainwindow.cpp
 )
 
 add_executable(${PROJECT} main.cpp ${src})
 target_link_libraries(${PROJECT} ${Boost_LIBRARIES})
-target_link_libraries(${PROJECT} -L${CMAKE_CURRENT_BINARY_DIR}/../libgoldmine -lgoldmine -L${CMAKE_CURRENT_BINARY_DIR}/../libcppio -lcppio )
+target_link_libraries(${PROJECT} -L${CMAKE_CURRENT_BINARY_DIR}/../libgoldmine -lgoldmine -L${CMAKE_CURRENT_BINARY_DIR}/../libcppio -lcppio -lfltk)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
@@ -56,7 +58,7 @@ set(test_sources
 add_executable(${PROJECT}-test ${test_sources} ${src})
 set_target_properties(${PROJECT}-test PROPERTIES COMPILE_FLAGS "-O0 -g -fprofile-arcs -ftest-coverage")
 set_target_properties(${PROJECT}-test PROPERTIES LINK_FLAGS "-fprofile-arcs -lgcov")
-target_link_libraries(${PROJECT}-test  ${Boost_LIBRARIES} -L${CMAKE_CURRENT_BINARY_DIR}/../libgoldmine -lgoldmine -L${CMAKE_CURRENT_BINARY_DIR}/../libcppio -lcppio )
+target_link_libraries(${PROJECT}-test  ${Boost_LIBRARIES} -L${CMAKE_CURRENT_BINARY_DIR}/../libgoldmine -lgoldmine -L${CMAKE_CURRENT_BINARY_DIR}/../libcppio -lcppio -lfltk)
 
 if(UNIX)
 	target_link_libraries(${PROJECT}-test ${Boost_LIBRARIES} -lpthread -ldl)

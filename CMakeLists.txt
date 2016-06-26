@@ -30,6 +30,10 @@ set(src
 
 	core/core.cpp
 	core/dataimportserver.cpp
+
+	core/broker/quikbroker.cpp
+	core/broker/trans2quik/trans2quik.cpp
+
 	core/tables/tableparserfactoryregistry.cpp
 	core/tables/tableconstructor.cpp
 	core/tables/parsers/currentparametertableparser.cpp

@@ -10,6 +10,7 @@
 #include "cppio/iolinemanager.h"
 
 #include "quotesource/quotesource.h"
+#include "broker/brokerserver.h"
 
 #include <boost/program_options.hpp>
 #include <boost/program_options/variables_map.hpp>
@@ -31,6 +32,7 @@ private:
 	TableParserFactoryRegistry::Ptr m_registry;
 	std::shared_ptr<cppio::IoLineManager> m_io;
 	std::shared_ptr<goldmine::QuoteSource> m_quotesourceServer;
+	std::shared_ptr<goldmine::BrokerServer> m_brokerServer;
 	std::atomic<bool> m_run;
 	std::string m_tablesConfig;
 };

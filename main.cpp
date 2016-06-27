@@ -18,6 +18,10 @@ int main(int argc, char** argv)
 		("dde-server-name", po::value<std::string>(), "DDE server name")
 		("dde-topic", po::value<std::string>(), "DDE topic")
 		("quotesource-endpoint", po::value<std::string>(), "Quotesource endpoint")
+		("brokerserver-endpoint", po::value<std::string>(), "Brokerserver endpoint")
+		("quik.account", po::value<std::string>(), "Account to use")
+		("quik.dll-path", po::value<std::string>(), "Path to Trans2Quik.dll")
+		("quik.exe-path", po::value<std::string>(), "Path to directory with QUIK executable")
 		;
 	po::variables_map vm;
 	po::store(po::parse_command_line(argc, argv, desc), vm);

@@ -6,7 +6,7 @@
 #include <atomic>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-static std::atomic_int gs_id;
+static std::atomic_int gs_id(1);
 QuikBroker* QuikBroker::m_instance;
 std::unique_ptr<Trans2QuikApi> QuikBroker::m_quik;
 static logger_t gs_logger(boost::log::keywords::channel = "quik");
@@ -327,6 +327,7 @@ void __stdcall QuikBroker::connectionStatusCallback(long event, long errorCode, 
 		m_instance->m_quik->TRANS2QUIK_START_TRADES(&QuikBroker::tradeCallback);
 
 		m_instance->m_connected = true;
+		LOG_WITH(gs_logger, info) << "Connected to QUIK";
 	}
 	else if((event == Trans2QuikApi::TRANS2QUIK_DLL_DISCONNECTED) ||
 			(event == Trans2QuikApi::TRANS2QUIK_QUIK_DISCONNECTED))
@@ -464,7 +465,6 @@ void QuikBroker::watchdogLoop()
 	while(m_run)
 	{
 		boost::unique_lock<boost::mutex> lock(m_watchdogMutex);
-		m_watchdogCv.timed_wait(lock, boost::posix_time::time_duration(0, 0, 10));
 		if(!m_connected)
 		{
 			result = m_quik->TRANS2QUIK_CONNECT(m_quikPath.c_str(), &extendedErrorCode, errorMessage.data(),
@@ -475,11 +475,13 @@ void QuikBroker::watchdogLoop()
 						errorMessage.data();
 			}
 		}
+		m_watchdogCv.timed_wait(lock, boost::posix_time::time_duration(0, 0, 10));
 	}
 }
 
 void QuikBroker::notifyOrderStateChange(const goldmine::Order::Ptr& order)
 {
+	LOG_WITH(gs_logger, debug) << "Order " << order->localId() << " state changed: " << (int)order->state();
 	for(const auto& reactor : m_reactors)
 	{
 		reactor->orderCallback(order);

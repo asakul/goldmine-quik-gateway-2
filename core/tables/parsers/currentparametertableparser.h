@@ -30,6 +30,7 @@ private:
 	void obtainSchema(const XlTable::Ptr& table);
 
 	void parseRow(int row, const XlTable::Ptr& table);
+	void emitTick(const std::string& ticker, goldmine::Tick& tick);
 
 private:
 	std::string m_topic;
@@ -41,6 +42,8 @@ private:
 	std::vector<int> m_schema;
 
 	DataSink::Ptr m_datasink;
+
+	std::vector<std::function<bool(const std::string& ticker, goldmine::Datatype type)>> m_filters;
 };
 
 class CurrentParameterTableParserFactory : public TableParserFactory

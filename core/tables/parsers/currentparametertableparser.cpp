@@ -39,6 +39,21 @@ static int indexOf(const std::string& code)
 	return -1;
 }
 
+static std::map<std::string, goldmine::Datatype> gs_datatypeMap
+{
+	{ "price", goldmine::Datatype::Price },
+	{ "open_interest", goldmine::Datatype::OpenInterest },
+	{ "best_bid", goldmine::Datatype::BestBid },
+	{ "best_offer", goldmine::Datatype::BestOffer },
+	{ "depth", goldmine::Datatype::Depth },
+	{ "total_supply", goldmine::Datatype::TotalSupply },
+	{ "total_demand", goldmine::Datatype::TotalDemand }
+};
+static goldmine::Datatype deserializeDatatype(const std::string& str)
+{
+	return gs_datatypeMap[str];
+}
+
 CurrentParameterTableParser::CurrentParameterTableParser(const std::string& topic,
 		const DataSink::Ptr& datasink) : m_topic(topic),
 	m_datasink(datasink)
@@ -77,7 +92,32 @@ void CurrentParameterTableParser::incomingTable(const XlTable::Ptr& table)
 
 void CurrentParameterTableParser::parseConfig(const Json::Value& root)
 {
-
+	auto ignoreList = root["ignore"];
+	if(!ignoreList.isNull())
+	{
+		auto it = ignoreList.begin();
+		while(it != ignoreList.end())
+		{
+            auto ignoreItem = it->asString();
+            auto slash = ignoreItem.find('/');
+            if(slash == std::string::npos)
+			{
+				m_filters.push_back([&](const std::string& ticker, goldmine::Datatype type)
+				{
+					return ticker == ignoreItem;
+				});
+			}
+			else
+			{
+				auto ignoreTicker = ignoreItem.substr(0, slash);
+				auto datatype = deserializeDatatype(ignoreItem.substr(slash + 1));
+				m_filters.push_back([&](const std::string& ticker, goldmine::Datatype type)
+				{
+					return (ticker == ignoreTicker) && (datatype == type);
+				});
+			}
+		}
+	}
 }
 
 bool CurrentParameterTableParser::schemaObtained() const
@@ -193,12 +233,12 @@ void CurrentParameterTableParser::parseRow(int row, const XlTable::Ptr& table)
 			tick.datatype = (int)goldmine::Datatype::BestBid;
 			tick.value = bidPrice;
 			tick.volume = 0;
-			m_datasink->incomingTick(code, tick);
+			emitTick(code, tick);
 
 			tick.datatype = (int)goldmine::Datatype::BestOffer;
 			tick.value = askPrice;
 			tick.volume = 0;
-			m_datasink->incomingTick(code, tick);
+			emitTick(code, tick);
 
 		}
 		catch(const boost::bad_get& e)
@@ -211,7 +251,7 @@ void CurrentParameterTableParser::parseRow(int row, const XlTable::Ptr& table)
 			tick.datatype = (int)goldmine::Datatype::Price;
 			tick.value = lastPrice;
 			tick.volume = delta >= 0 ? volume : -volume;
-			m_datasink->incomingTick(code, tick);
+			emitTick(code, tick);
 		}
 	}
 	catch(const boost::bad_get& e)
@@ -226,7 +266,7 @@ void CurrentParameterTableParser::parseRow(int row, const XlTable::Ptr& table)
 		tick.datatype = (int)goldmine::Datatype::OpenInterest;
 		tick.value = openInterest;
 		tick.volume = 0;
-		m_datasink->incomingTick(code, tick);
+		emitTick(code, tick);
 	}
 	catch(const boost::bad_get& e)
 	{
@@ -239,7 +279,7 @@ void CurrentParameterTableParser::parseRow(int row, const XlTable::Ptr& table)
 		tick.datatype = (int)goldmine::Datatype::TotalDemand;
 		tick.value = totalBid;
 		tick.volume = 0;
-		m_datasink->incomingTick(code, tick);
+		emitTick(code, tick);
 	}
 	catch(const boost::bad_get& e)
 	{
@@ -251,11 +291,21 @@ void CurrentParameterTableParser::parseRow(int row, const XlTable::Ptr& table)
 		tick.datatype = (int)goldmine::Datatype::TotalSupply;
 		tick.value = totalAsk;
 		tick.volume = 0;
-		m_datasink->incomingTick(code, tick);
+		emitTick(code, tick);
 	}
 	catch(const boost::bad_get& e)
 	{
 	}
+}
+
+void CurrentParameterTableParser::emitTick(const std::string& ticker, goldmine::Tick& tick)
+{
+	for(const auto& filter : m_filters)
+	{
+		if(filter(ticker, (goldmine::Datatype)tick.datatype))
+			return;
+	}
+	m_datasink->incomingTick(ticker, tick);
 }
 
 TableParser::Ptr CurrentParameterTableParserFactory::create(const std::string& topic, const DataSink::Ptr& datasink)

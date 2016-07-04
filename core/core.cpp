@@ -59,7 +59,10 @@ void Core::run()
 
 void Core::incomingTick(const std::string& ticker, const goldmine::Tick& tick)
 {
-	m_quotesourceServer->incomingTick(ticker, tick);
+	{
+		boost::unique_lock<boost::mutex> lock(m_mutex);
+		m_quotesourceServer->incomingTick(ticker, tick);
+	}
 	m_quoteTable->updateQuote(ticker, tick);
 }
 

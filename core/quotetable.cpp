@@ -15,6 +15,7 @@ QuoteTable::~QuoteTable()
 
 void QuoteTable::updateQuote(const std::string& ticker, const goldmine::Tick& tick)
 {
+	boost::unique_lock<boost::mutex> lock(m_mutex);
 	m_table[std::make_pair(ticker, goldmine::Datatype(tick.datatype))] = tick;
 	if(m_enabledTickers.find(ticker) != m_enabledTickers.end())
 		m_callback(ticker, tick);
@@ -22,6 +23,7 @@ void QuoteTable::updateQuote(const std::string& ticker, const goldmine::Tick& ti
 
 goldmine::Tick QuoteTable::lastQuote(const std::string& ticker, goldmine::Datatype datatype)
 {
+	boost::unique_lock<boost::mutex> lock(m_mutex);
 	auto it = m_table.find(std::make_pair(ticker, datatype));
 	if(it != m_table.end())
 	{

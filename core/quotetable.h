@@ -10,7 +10,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <memory>
-
+#include <boost/thread.hpp>
 
 class QuoteTable
 {
@@ -43,6 +43,7 @@ private:
 	std::unordered_map<Key, goldmine::Tick, KeyHasher> m_table;
 	TickCallback m_callback;
 	std::unordered_set<std::string> m_enabledTickers;
+	boost::mutex m_mutex;
 };
 
 #endif /* CORE_QUOTETABLE_H_ */

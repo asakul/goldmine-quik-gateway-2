@@ -37,6 +37,7 @@ private:
 	std::atomic<bool> m_run;
 	std::string m_tablesConfig;
 	QuoteTable::Ptr m_quoteTable;
+	boost::mutex m_mutex;
 };
 
 #endif /* ifndef CORE_H */

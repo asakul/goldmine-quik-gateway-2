@@ -30,7 +30,9 @@ set(src
 
 	core/core.cpp
 	core/dataimportserver.cpp
+	core/quotetable.cpp
 
+	core/broker/paperbroker.cpp
 	core/broker/quikbroker.cpp
 	core/broker/trans2quik/trans2quik.cpp
 

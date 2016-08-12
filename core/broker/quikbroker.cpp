@@ -431,6 +431,8 @@ void __stdcall QuikBroker::tradeCallback(long mode, double number, double orderN
 		trade.operation = (isSell ? Order::Operation::Sell : Order::Operation::Buy);
 		trade.account = order->account();
 		trade.security = order->security();
+		trade.volume = volume;
+		trade.volumeCurrency = m_quik->TRANS2QUIK_TRADE_CURRENCY(tradeDescriptor);
 
 		long ymd = m_quik->TRANS2QUIK_TRADE_DATE_TIME(tradeDescriptor, 0);
 		long hms = m_quik->TRANS2QUIK_TRADE_DATE_TIME(tradeDescriptor, 1);

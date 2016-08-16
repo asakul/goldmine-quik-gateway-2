@@ -333,7 +333,15 @@ void __stdcall QuikBroker::connectionStatusCallback(long event, long errorCode, 
 			(event == Trans2QuikApi::TRANS2QUIK_QUIK_DISCONNECTED))
 	{
 		LOG_WITH(gs_logger, warning) << "Disconnection event: " << event;
-		m_instance->m_connected = false;
+		if(event == Trans2QuikApi::TRANS2QUIK_DLL_DISCONNECTED)
+		{
+			m_instance->m_connected = false;
+		}
+		else
+		{
+			LOG_WITH(gs_logger, info) << "Connection to server lost, waiting for reconnect";
+			// Handle orders
+		}
 	}
 }
 

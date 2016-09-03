@@ -246,18 +246,22 @@ void PaperBroker::executeBuyAt(const Order::Ptr& order, const goldmine::decimal_
 	trade.orderId = order->clientAssignedId();
 	trade.account = order->account();
 	trade.price = price.toDouble();
+	trade.volume = volume;
+	trade.volumeCurrency = "TEST";
 	trade.quantity = order->quantity();
 	trade.operation = order->operation();
 	trade.security = order->security();
 	trade.timestamp = timestamp;
 	trade.useconds = useconds;
+	trade.signalId = order->signalId();
 	emitTrade(trade);
 }
 
 void PaperBroker::executeSellAt(const Order::Ptr& order, const goldmine::decimal_fixed& price, uint64_t timestamp, uint32_t useconds)
 {
 	LOG_WITH(gs_logger, info) << "VB: executeSellAt: " << price.toDouble();
-	m_cash += price.toDouble() * order->quantity();
+	double volume = price.toDouble() * order->quantity();
+	m_cash += volume;
 	m_portfolio[order->security()] -= order->quantity();
 	order->updateState(Order::State::Executed);
 
@@ -265,11 +269,14 @@ void PaperBroker::executeSellAt(const Order::Ptr& order, const goldmine::decimal
 	trade.orderId = order->clientAssignedId();
 	trade.account = order->account();
 	trade.price = price.toDouble();
+	trade.volume = volume;
+	trade.volumeCurrency = "TEST";
 	trade.quantity = order->quantity();
 	trade.operation = order->operation();
 	trade.security = order->security();
 	trade.timestamp = timestamp;
 	trade.useconds = useconds;
+	trade.signalId = order->signalId();
 	emitTrade(trade);
 }
 

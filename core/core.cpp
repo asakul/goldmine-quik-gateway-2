@@ -13,6 +13,7 @@
 #include "exceptions.h"
 
 #include <fstream>
+#include <boost/optional.hpp>
 
 Core::Core(const boost::program_options::variables_map& config) :
 	m_ddeServer(std::make_shared<DataImportServer>(config["dde-server-name"].as<std::string>(),
@@ -33,7 +34,17 @@ Core::Core(const boost::program_options::variables_map& config) :
 	m_brokerServer->registerBroker(std::make_shared<QuikBroker>(config["quik.dll-path"].as<std::string>(),
 			config["quik.exe-path"].as<std::string>(), accounts));
 
-	m_brokerServer->registerBroker(std::make_shared<PaperBroker>(100000., m_quoteTable));
+	try
+	{
+		auto statsEndpoint = config["stats-endpoint"].as<std::string>();
+		m_brokerServer->setTradeSink(statsEndpoint);
+	}
+	catch(const boost::bad_any_cast& e)
+	{
+		// Ignore
+	}
+
+	m_brokerServer->registerBroker(std::make_shared<PaperBroker>(100000000., m_quoteTable));
 }
 
 Core::~Core()

@@ -22,6 +22,7 @@ int main(int argc, char** argv)
 		("quik.account", po::value<std::string>(), "Account to use")
 		("quik.dll-path", po::value<std::string>(), "Path to Trans2Quik.dll")
 		("quik.exe-path", po::value<std::string>(), "Path to directory with QUIK executable")
+		("stats-endpoint", po::value<std::string>(), "Endpoint of stats server")
 		;
 	po::variables_map vm;
 	po::store(po::parse_command_line(argc, argv, desc), vm);
